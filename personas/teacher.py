@@ -13,6 +13,7 @@ def name_check(teacher_name):
             break
     return unique
 
+
 def teacher_information(): # returns tuple with subject name, teacher name, and password
     # Unique name check
     name_cond = True
@@ -47,11 +48,42 @@ def teacher_information(): # returns tuple with subject name, teacher name, and 
 
     return subject_name, [teacher_name, teacher_password, {}]
 
+
+def teacher_info(teacher_name):
+    for subject in database:
+        if database[subject][0] == teacher_name:
+            return subject, database[subject]
+
+
+def teacher_login():
+    print("Please type the login information below...")
+    login_cond = True
+    while login_cond:
+        teacher_name = input("Please type your name: ")
+        teacher_password = input("Please register a password: ")
+        if not name_check(teacher_name): # checks if name is in database
+            teacher_subject, teacher_subject_info = teacher_info(teacher_name)
+            if teacher_password == teacher_subject_info[1]:
+                login_cond = False
+            else: # incorrect password
+                print("Incorrect password. Try again...")
+        else:
+            print("It seems you haven't registred a class...")
+            ans = input("Would you like to register a class? ")
+            if ans.lower() == "yes":
+                teacher_signup()
+            else:
+                 print("Perhaps you mispelled your name. Try again...")
+    return teacher_subject, teacher_subject_info
+
+
 def teacher_signup():
     database_key, database_value = teacher_information()
     database[database_key] = database_value
     print(f'All done!\nYour class has been registred, {database_value[0]}.')
-    
+    teacher_login()
+
+
 def main():
     cond = True
     print("Welcome to the school grading system!")
