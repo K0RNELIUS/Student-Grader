@@ -24,11 +24,11 @@ def student_search(class_database, student_name):
         # Display
         sep = "*" + ("-" * (biggest_string + 2)) + "*---------*---------*---------*"
         print(sep)
-        line_print("Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ") # Header line
+        line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ") # Header line
         print(sep)
         for student_subject in student_subjects:
             student_grades = class_database[student_subject][2][student_name]
-            line_print(student_subject, student_grades[0], student_grades[1], student_grades[2])
+            line_print(biggest_string, student_subject, student_grades[0], student_grades[1], student_grades[2])
             print(sep)
 
     else: # Student not registered in any classes
