@@ -6,4 +6,8 @@ Student Dictionary
 key: student_name
 value: [grade1, grade2, grade3]
 
+teacher login return
+teacher_name, teacher_subject,
+teacher_subject_info
+
 
