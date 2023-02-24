@@ -121,7 +121,7 @@ def teacher_signup():
     return teacher_login()
 
 
-def teacher_commands():
+def teacher_commands(teacher_subject):
     cont_cond = True
     while cont_cond:
         print("Command Options:\n"
@@ -131,12 +131,43 @@ def teacher_commands():
               "4 - List students grades\n"
               "5 - End session")
         option = int(input("Which command would you like to perform: "))
+
         if option == 1:
-            print()
+            student_name = input("What is the student name you would like to add? ")
+            if student_name not in database[teacher_subject][2]:
+                database[teacher_subject][2][student_name] = 3 * ["-"]
+            else:
+                print("There is already a student in your class with the name typed. Try again...")
+
         elif option == 2:
-            print()
+            student_name = input("What is the student's name you would like to alter grades? ")
+            if student_name in database[teacher_subject][2]:
+                grades = database[teacher_subject][2][student_name]
+                print(f'Here are {student_name} grades so far:\n'
+                      f'Grade 1: {grades[0]}\n'
+                      f'Grade 2: {grades[1]}\n'
+                      f'Grade 3: {grades[2]}')
+                update_which = input("Which one would you like to alter? ")
+                if update_which == "1" or update_which == "2" or update_which == "3":
+                    update_value = input("What is the updated value (between 0 and 10)? ")
+                    if update_value.isalpha() == False:
+                        if 10 >= float(update_value) >= 0:
+                            database[student_name][2][student_name][int(update_which)] = update_value
+                        else:
+                            print("The typed number isn't in the interval defined. Try again...")
+                    else:
+                        print("String typed isn't a number. Try again...")
+                else:
+                    print("Invalid option. Try again...")
+            else:
+                print("There isn't a student in your class with the name typed. Try again...")
+
         elif option == 3:
-            print()
+            student_name = input("Which student would you like to search grades? ")
+            if student_name in database[teacher_subject][2]:
+                print()
+            else:
+                print("There isn't a student in your class with the name typed. Try again...")
         elif option == 5:
             cont_cond = False
         else:
@@ -173,7 +204,7 @@ def main():
                     account_cond = False
                 else:
                     print("Invalid option. Try again...")
-            teacher_commands()
+            teacher_commands(teacher_name, teacher_subject, teacher_subject_info)
             print(f'Thank you, {teacher_name}! Come back anytime...')
             main_cond = False
         elif persona == "student":
