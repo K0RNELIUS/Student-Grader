@@ -6,7 +6,10 @@ In this sense, to research information, the program must ask for their name to s
 '''
 
 def line_print(subject_format, subject_name, grade1, grade2, grade3):
+    sep = "*" + ("-" * (subject_format + 2)) + "*---------*---------*---------*"
     print(f'| {subject_name.center(subject_format)} | {grade1} | {grade2} | {grade3} |')
+    print(sep)
+
 
 def student_search(student_name):
     # Subject column format
@@ -27,11 +30,10 @@ def student_search(student_name):
         sep = "*" + ("-" * (biggest_string + 2)) + "*---------*---------*---------*"
         print(sep)
         line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ") # Header line
-        print(sep)
         for student_subject in student_subjects:
             student_grades = database[student_subject][2][student_name]
             line_print(biggest_string, student_subject, student_grades[0], student_grades[1], student_grades[2])
-            print(sep)
+
 
     else: # Student not registered in any classes
         print(f'{student_name}, you are not registered in any classes...')
@@ -130,16 +132,16 @@ def teacher_commands(teacher_subject):
               "3 - Search student\n"
               "4 - List students grades\n"
               "5 - End session")
-        option = int(input("Which command would you like to perform: "))
+        option = input("Which command would you like to perform: ")
 
-        if option == 1:
+        if option == "1":
             student_name = input("What is the student name you would like to add? ")
             if student_name not in database[teacher_subject][2]:
                 database[teacher_subject][2][student_name] = 3 * ["-"]
             else:
                 print("There is already a student in your class with the name typed. Try again...")
 
-        elif option == 2:
+        elif option == "2":
             student_name = input("What is the student's name you would like to alter grades? ")
             if student_name in database[teacher_subject][2]:
                 grades = database[teacher_subject][2][student_name]
@@ -162,13 +164,20 @@ def teacher_commands(teacher_subject):
             else:
                 print("There isn't a student in your class with the name typed. Try again...")
 
-        elif option == 3:
+        elif option == "3":
             student_name = input("Which student would you like to search grades? ")
             if student_name in database[teacher_subject][2]:
-                print()
+                if len("Student Name") > len(student_name):
+                    biggest_string = len("Student Name")
+                else:
+                    biggest_string = len(student_name)
+                sep = "*" + ("-" * (biggest_string + 2)) + "*---------*---------*---------*"
+                print(sep)
+                grades = database[teacher_subject][2][student_name]
+                line_print(biggest_string, student_name, grades[0], grades[1], grades[2])
             else:
                 print("There isn't a student in your class with the name typed. Try again...")
-        elif option == 5:
+        elif option == "5":
             cont_cond = False
         else:
             print("Please type a valid option. Try again...")

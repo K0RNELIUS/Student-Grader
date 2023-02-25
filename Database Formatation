@@ -10,4 +10,9 @@ teacher login return
 teacher_name, teacher_subject,
 teacher_subject_info
 
-
+teacher commands
+1 - add student
+2 - update student grade
+3 - search student
+4 - list student grade
+5 - end
