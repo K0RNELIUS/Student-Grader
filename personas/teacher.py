@@ -5,9 +5,12 @@ Students are allowed to consult their grades in classes their names are present.
 In this sense, to research information, the program must ask for their name to seek from the dicionaries
 '''
 
-def line_print(subject_format, subject_name, grade1, grade2, grade3):
-    sep = "*" + ("-" * (subject_format + 2)) + "*---------*---------*---------*"
-    print(f'| {subject_name.center(subject_format)} | {grade1} | {grade2} | {grade3} |')
+def line_print(format, subject_name, grade1, grade2, grade3):
+    sep = "*" + ("-" * (format + 2)) + "*" \
+          + ("-" * (format + 2)) + "*" \
+          + ("-" * (format + 2)) + "*" \
+          + ("-" * (format + 2)) + "*"
+    print(f'| {subject_name.center(format)} | {grade1.center(format)} | {grade2.center(format)} | {grade3.center(format)} |')
     print(sep)
 
 
@@ -27,7 +30,10 @@ def student_search(student_name):
         print(f'Welcome, {student_name}!\nBelow are your grades so far...')
 
         # Display
-        sep = "*" + ("-" * (biggest_string + 2)) + "*---------*---------*---------*"
+        sep = "*" + ("-" * (biggest_string + 2)) + "*" \
+              + ("-" * (biggest_string + 2)) + "*" \
+              + ("-" * (biggest_string + 2)) + "*" \
+              + ("-" * (biggest_string + 2)) + "*"
         print(sep)
         line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ") # Header line
         for student_subject in student_subjects:
@@ -154,7 +160,7 @@ def teacher_commands(teacher_subject):
                     update_value = input("What is the updated value (between 0 and 10)? ")
                     if update_value.isalpha() == False:
                         if 10 >= float(update_value) >= 0:
-                            database[student_name][2][student_name][int(update_which)] = update_value
+                            database[teacher_subject][2][student_name][int(update_which) - 1] = update_value
                         else:
                             print("The typed number isn't in the interval defined. Try again...")
                     else:
@@ -171,8 +177,12 @@ def teacher_commands(teacher_subject):
                     biggest_string = len("Student Name")
                 else:
                     biggest_string = len(student_name)
-                sep = "*" + ("-" * (biggest_string + 2)) + "*---------*---------*---------*"
+                sep = "*" + ("-" * (biggest_string + 2)) + "*" \
+                      + ("-" * (biggest_string + 2)) + "*" \
+                      + ("-" * (biggest_string + 2)) + "*" \
+                      + ("-" * (biggest_string + 2)) + "*"
                 print(sep)
+                line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ")  # Header line
                 grades = database[teacher_subject][2][student_name]
                 line_print(biggest_string, student_name, grades[0], grades[1], grades[2])
             else:
@@ -184,7 +194,10 @@ def teacher_commands(teacher_subject):
             for student in students:
                 if len(student) > biggest_string:
                     biggest_string = len(student)
-            sep = "*" + ("-" * (biggest_string + 2)) + "*---------*---------*---------*"
+            sep = "*" + ("-" * (biggest_string + 2)) + "*" \
+                  + ("-" * (biggest_string + 2)) + "*" \
+                  + ("-" * (biggest_string + 2)) + "*" \
+                  + ("-" * (biggest_string + 2)) + "*"
             print(sep)
             line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ") # Header line
             for student in sorted(students):
