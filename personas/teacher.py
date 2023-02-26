@@ -31,8 +31,8 @@ def student_search(student_name):
         print(sep)
         line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ") # Header line
         for student_subject in student_subjects:
-            student_grades = database[student_subject][2][student_name]
-            line_print(biggest_string, student_subject, student_grades[0], student_grades[1], student_grades[2])
+            grades = database[student_subject][2][student_name]
+            line_print(biggest_string, student_subject, grades[0], grades[1], grades[2])
 
 
     else: # Student not registered in any classes
@@ -53,7 +53,7 @@ def name_check(teacher_name):
     return unique
 
 
-def teacher_information(): # returns tuple with subject name, teacher name, and password
+def teacher_gathering(): # returns tuple with subject name, teacher name, and password
     # Unique name check
     name_cond = True
     print("Alright, let's register your class!")
@@ -99,16 +99,16 @@ def teacher_login():
     login_cond = True
     while login_cond:
         teacher_name = input("Please type your name: ")
-        teacher_password = input("Please register a password: ")
         if not name_check(teacher_name): # checks if name is in database
             teacher_subject, teacher_subject_info = teacher_info(teacher_name)
+            teacher_password = input("Please register a password: ")
             if teacher_password == teacher_subject_info[1]:
                 login_cond = False
             else: # incorrect password
                 print("Incorrect password. Try again...")
         else:
             print("It seems you haven't registred a class...")
-            ans = input("Would you like to register a class? ")
+            ans = input("Would you like to register a class?(yes/no) ")
             if ans.lower() == "yes":
                 teacher_signup()
             else:
@@ -117,7 +117,7 @@ def teacher_login():
 
 
 def teacher_signup():
-    database_key, database_value = teacher_information()
+    database_key, database_value = teacher_gathering()
     database[database_key] = database_value
     print(f'All done!\nYour class has been registred, {database_value[0]}.')
     return teacher_login()
@@ -177,6 +177,20 @@ def teacher_commands(teacher_subject):
                 line_print(biggest_string, student_name, grades[0], grades[1], grades[2])
             else:
                 print("There isn't a student in your class with the name typed. Try again...")
+
+        elif option == "4":
+            students = database[teacher_subject][2]
+            biggest_string = len("Student Name")
+            for student in students:
+                if len(student) > biggest_string:
+                    biggest_string = len(student)
+            sep = "*" + ("-" * (biggest_string + 2)) + "*---------*---------*---------*"
+            print(sep)
+            line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ") # Header line
+            for student in sorted(students):
+                grades = database[teacher_subject][2][student]
+                line_print(biggest_string, student, grades[0], grades[1], grades[2])
+
         elif option == "5":
             cont_cond = False
         else:
@@ -184,14 +198,15 @@ def teacher_commands(teacher_subject):
 
 
 def teacher_access():
-    while access_pass:
+    access_cond = True
+    while access_cond:
         if input("Type the teacher access password provided by the program: ") == "teacher":
-            access_pass = False
+            access_cond = False
         else:
             print("The typed access password is incorrect.")
             student = input("Would you like to return to the main page?(yes/no) ")
             if student.lower() == "yes":
-                access_pass = False
+                access_cond = False
                 main()
 
 
@@ -199,7 +214,7 @@ def main():
     main_cond = True
     print("Welcome to the school grading system!")
     while main_cond:
-        persona = input("Are you a student or teacher?")
+        persona = input("Are you a student or teacher? ")
         if persona == "teacher":
             teacher_access()
             account_cond = True
@@ -213,12 +228,15 @@ def main():
                     account_cond = False
                 else:
                     print("Invalid option. Try again...")
-            teacher_commands(teacher_name, teacher_subject, teacher_subject_info)
+            teacher_commands(teacher_subject)
             print(f'Thank you, {teacher_name}! Come back anytime...')
-            main_cond = False
         elif persona == "student":
             student_search(input("Type your name to do the search: "))
-            main_cond = False
         else:
             print("Please type student or teacher. Try again...")
+        keep_going = input("Would you like to keep going?(yes/no) ")
+        if keep_going.lower() == "no":
+            main_cond = False
+    print("Logging off...")
 
+main()
