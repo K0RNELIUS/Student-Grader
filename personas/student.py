@@ -5,13 +5,18 @@ In this sense, to research information, the program must ask for their name to s
 
 database = {}
 
-def line_print(format, subject_name, grade1, grade2, grade3):
-    sep = "*" + ("-" * (format + 2)) + "*" \
-          + ("-" * (format + 2)) + "*" \
-          + ("-" * (format + 2)) + "*" \
-          + ("-" * (format + 2)) + "*"
-    print(f'| {subject_name.center(format)} | {grade1.center(format)} | {grade2.center(format)} | {grade3.center(format)} |')
-    print(sep)
+def line_separator(biggest_string_len, number_of_columns):
+    separator = "*"
+    for i in range(number_of_columns):
+        separator += ("-" * (biggest_string_len + 2)) + "*"
+    return separator
+
+def line_print(biggest_string_len, number_of_columns, line_header, grades):
+    line = f'| {line_header.center(biggest_string_len)} |'
+    for i in range(number_of_columns):
+        line += f' {grades[i].center(biggest_string_len)} |'
+    return line
+
 
 def student_search(student_name):
     # Subject column format
