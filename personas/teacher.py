@@ -5,40 +5,48 @@ Students are allowed to consult their grades in classes their names are present.
 In this sense, to research information, the program must ask for their name to seek from the dicionaries
 '''
 
-def line_print(format, subject_name, grade1, grade2, grade3):
-    sep = "*" + ("-" * (format + 2)) + "*" \
-          + ("-" * (format + 2)) + "*" \
-          + ("-" * (format + 2)) + "*" \
-          + ("-" * (format + 2)) + "*"
-    print(f'| {subject_name.center(format)} | {grade1.center(format)} | {grade2.center(format)} | {grade3.center(format)} |')
-    print(sep)
+def line_separator(biggest_string_len, number_of_columns):
+    separator = "*"
+    for i in range(number_of_columns):
+        separator += ("-" * (biggest_string_len + 2)) + "*"
+    return separator
+
+def line_print(biggest_string_len, number_of_columns, line_header, grades):
+    line = f'| {line_header.center(biggest_string_len)} |'
+    for i in range(number_of_columns):
+        line += f' {grades[i].center(biggest_string_len)} |'
+    return line
 
 
 def student_search(student_name):
     # Subject column format
     biggest_string = len("Subject Name")
+    biggest_columns = 0
     student_subjects = []
 
-    # Student information search
+    # Student information search and format adaptations
     for subject in database:
         if student_name in database[subject][2].keys():
             student_subjects.append(subject)
             if len(subject) > biggest_string:
                 biggest_string = len(subject)
+            if len(database[subject][2][student_name]) > biggest_columns:
+                biggest_columns = len(database[subject][2][student_name])
+    header_grades = []
+    for i in range(1, biggest_columns + 1):
+        header_grades.append(f'Grade {i}')
+
     if len(student_subjects) != 0:
         # Student greet and program information
         print(f'Welcome, {student_name}!\nBelow are your grades so far...')
 
         # Display
-        sep = "*" + ("-" * (biggest_string + 2)) + "*" \
-              + ("-" * (biggest_string + 2)) + "*" \
-              + ("-" * (biggest_string + 2)) + "*" \
-              + ("-" * (biggest_string + 2)) + "*"
-        print(sep)
-        line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ") # Header line
-        for student_subject in student_subjects:
+        separator = line_separator(biggest_string, biggest_columns)
+        print(separator)
+        print(line_print(biggest_string, biggest_columns, "Subject Name", header_grades))
+        for student_subject in sorted(student_subjects):
             grades = database[student_subject][2][student_name]
-            line_print(biggest_string, student_subject, grades[0], grades[1], grades[2])
+            line_print(biggest_string, biggest_columns, student_subject, grades)
 
 
     else: # Student not registered in any classes
@@ -59,7 +67,7 @@ def name_check(teacher_name):
     return unique
 
 
-def teacher_gathering(): # returns tuple with subject name, teacher name, and password
+def teacher_gathering(): # returns tuple with subject name, teacher name, password, and number of grades
     # Unique name check
     name_cond = True
     print("Alright, let's register your class!")
@@ -83,15 +91,30 @@ def teacher_gathering(): # returns tuple with subject name, teacher name, and pa
 
     # Unique subject name check
     subject_cond = True
-    print("Perfect! Let's finish the class setup!")
+    print("Perfect! Let's keep going!")
     while subject_cond:
-        subject_name = input("Finally type in the class name: ")
+        subject_name = input("Type in the class name: ")
         if subject_name not in database.keys():
             subject_cond = False
         else:
             print("Another teacher is alreadying using the class name typed. Try another...")
 
-    return subject_name, [teacher_name, teacher_password, {}]
+    # Number of grades number check
+    grades_cond = True
+    print("Alright! To finish the setup!")
+    while grades_cond:
+        number_of_grades = input("Finally, how many grades would you like the class to have? ")
+        if not number_of_grades.isalpha():
+            if number_of_grades.isdigit():
+                grades_cond = False
+                number_of_grades = int(number_of_grades)
+            else:
+                print("The typed number isn't an integer. Try again...")
+        else:
+            print("The typed number isn't a number. Try again...")
+
+
+    return subject_name, [teacher_name, teacher_password, number_of_grades, {}]
 
 
 def teacher_info(teacher_name):
@@ -142,25 +165,24 @@ def teacher_commands(teacher_subject):
 
         if option == "1":
             student_name = input("What is the student name you would like to add? ")
-            if student_name not in database[teacher_subject][2]:
-                database[teacher_subject][2][student_name] = 3 * ["-"]
+            if student_name not in database[teacher_subject][3]:
+                database[teacher_subject][3][student_name] = database[teacher_subject][2] * ["-"]
             else:
                 print("There is already a student in your class with the name typed. Try again...")
 
         elif option == "2":
             student_name = input("What is the student's name you would like to alter grades? ")
-            if student_name in database[teacher_subject][2]:
-                grades = database[teacher_subject][2][student_name]
-                print(f'Here are {student_name} grades so far:\n'
-                      f'Grade 1: {grades[0]}\n'
-                      f'Grade 2: {grades[1]}\n'
-                      f'Grade 3: {grades[2]}')
+            if student_name in database[teacher_subject][3]:
+                print(f'Here are {student_name} grades so far:')
+                grades = database[teacher_subject][3][student_name]
+                for i in range(1, len(grades) + 1):
+                    print(f'Grade {i} - {grades[i] - 1}')
                 update_which = input("Which one would you like to alter? ")
-                if update_which == "1" or update_which == "2" or update_which == "3":
+                if update_which in range(1, len(grades)):
                     update_value = input("What is the updated value (between 0 and 10)? ")
                     if update_value.isalpha() == False:
                         if 10 >= float(update_value) >= 0:
-                            database[teacher_subject][2][student_name][int(update_which) - 1] = update_value
+                            database[teacher_subject][3][student_name][int(update_which) - 1] = update_value
                         else:
                             print("The typed number isn't in the interval defined. Try again...")
                     else:
@@ -172,7 +194,7 @@ def teacher_commands(teacher_subject):
 
         elif option == "3":
             student_name = input("Which student would you like to search grades? ")
-            if student_name in database[teacher_subject][2]:
+            if student_name in database[teacher_subject][3]:
                 if len("Student Name") > len(student_name):
                     biggest_string = len("Student Name")
                 else:
@@ -183,13 +205,13 @@ def teacher_commands(teacher_subject):
                       + ("-" * (biggest_string + 2)) + "*"
                 print(sep)
                 line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ")  # Header line
-                grades = database[teacher_subject][2][student_name]
+                grades = database[teacher_subject][3][student_name]
                 line_print(biggest_string, student_name, grades[0], grades[1], grades[2])
             else:
                 print("There isn't a student in your class with the name typed. Try again...")
 
         elif option == "4":
-            students = database[teacher_subject][2]
+            students = database[teacher_subject][3]
             biggest_string = len("Student Name")
             for student in students:
                 if len(student) > biggest_string:
@@ -201,7 +223,7 @@ def teacher_commands(teacher_subject):
             print(sep)
             line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ") # Header line
             for student in sorted(students):
-                grades = database[teacher_subject][2][student]
+                grades = database[teacher_subject][3][student]
                 line_print(biggest_string, student, grades[0], grades[1], grades[2])
 
         elif option == "5":
