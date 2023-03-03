@@ -199,14 +199,16 @@ def teacher_commands(teacher_subject):
                     biggest_string = len("Student Name")
                 else:
                     biggest_string = len(student_name)
-                sep = "*" + ("-" * (biggest_string + 2)) + "*" \
-                      + ("-" * (biggest_string + 2)) + "*" \
-                      + ("-" * (biggest_string + 2)) + "*" \
-                      + ("-" * (biggest_string + 2)) + "*"
-                print(sep)
-                line_print(biggest_string, "Subject Name", " Grade 1 ", " Grade 2 ", " Grade 3 ")  # Header line
                 grades = database[teacher_subject][3][student_name]
-                line_print(biggest_string, student_name, grades[0], grades[1], grades[2])
+                separator = line_separator(biggest_string, len(grades))
+                biggest_columns = len(grades)
+                header_grades = []
+                for i in range(1, biggest_columns + 1):
+                    header_grades.append(f'Grade {i}')
+                print(separator)
+                print(line_print(biggest_string, biggest_columns, "Student Name", header_grades))
+                print(separator)
+                print(line_print(biggest_string, biggest_columns, student_name, grades))
             else:
                 print("There isn't a student in your class with the name typed. Try again...")
 
